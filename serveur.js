@@ -10,7 +10,8 @@ const cors= require('cors');
  const bodyParser = require('body-parser');
 const path = require("path");
 const multer = require("multer");
-const FileModel = require("./models/car")
+const FileModel = require("./models/car");
+const user = require("./models/user");
 //create an express app
 const app = express();
 let upload = multer({
@@ -34,7 +35,7 @@ let upload = multer({
     callback(null, true)
   }
 });
-const obj =(req,res,next) => {
+/* const obj =(req,res,next) => {
   try {    
      upload(req, res,  () => {
          next();
@@ -43,7 +44,7 @@ const obj =(req,res,next) => {
   } catch (error) {
      console.log(error)  
   }
- }
+ } */
 
 //config express app
 app.use(express.json());
@@ -89,7 +90,20 @@ app.post('/upload', upload.any(), async (req, res) => {
   }
 });
 
-
+/////User
+app.post('/login',async(req,res)=>{
+  const User = await user.findOne({
+    email:req.body.email,
+    password:req.body.password}) 
+    if(User){
+     return res.json({status:'ok'})
+    }else{
+      return res.json({status:'error'})
+    }
+ 
+   
+ 
+})
 //start serveur
 app.use(express.static(path.join(__dirname, "./uploads/")));
 app.listen(process.env.PORT);
